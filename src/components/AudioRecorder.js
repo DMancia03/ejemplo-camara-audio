@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import { View, Text, StyleSheet, Button } from "react-native";
+import { View, Text, StyleSheet, Button, Alert } from "react-native";
 import { Audio } from "expo-av";
 
 export const AudioRecorder = () => {
@@ -7,21 +7,25 @@ export const AudioRecorder = () => {
 
 
   const toggleRecording = async () => {
+    //Alert.alert('Grabando Audio');
     if (!isRecording) {
       try {
         const { status } = await Audio.requestPermissionsAsync();
         if (status === 'granted') {
+            //Alert.alert('Permiso Concedido');
           const recording = new Audio.Recording();
           await recording.prepareToRecordAsync(Audio.RECORDING_OPTIONS_PRESET_HIGH_QUALITY);
           await recording.startAsync();
           setIsRecording(true);
+          await recording.pauseAsync();
         } else {
-          console.log('Permissions Denied');
+          Alert.alert('Permissions Denied');
         }
       } catch (error) {
-        console.error('Failed to start recording', error);
+        Alert.alert(error.message);
       }
     } else {
+        Alert.alert('Grabación Finalizada');
       // Stop recording
       setIsRecording(false);
     }
